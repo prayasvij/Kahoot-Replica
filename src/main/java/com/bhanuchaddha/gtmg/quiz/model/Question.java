@@ -1,6 +1,7 @@
 package com.bhanuchaddha.gtmg.quiz.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,12 +15,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Data
 @Entity
+@NoArgsConstructor
 public class Question {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
+    @Column(length = 1000)
     private String description;
     private QuestionType type;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -20,6 +20,6 @@ public class MovieResource {
 
     @GetMapping("/movies")
     public List<Movie> getMovies(){
-        return movieDBIntegration.getMovies();
+        return movieDBIntegration.getPopularMovies(1);
     }
 }

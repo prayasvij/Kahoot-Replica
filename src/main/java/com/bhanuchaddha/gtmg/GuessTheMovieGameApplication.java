@@ -1,5 +1,6 @@
 package com.bhanuchaddha.gtmg;
 
+import com.bhanuchaddha.gtmg.quiz.QuizGenerator;
 import com.bhanuchaddha.gtmg.quiz.model.Question;
 import com.bhanuchaddha.gtmg.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class GuessTheMovieGameApplication {
 	}
 
 	@Autowired
-	private QuestionRepository questionRepository;
+	private QuizGenerator quizGenerator;
 
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -29,13 +30,6 @@ public class GuessTheMovieGameApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void populateQuestions(){
-		Question q1 = new Question();
-		q1.setDescription("What is the capital of Denmark.");
-		q1.addOption("Arhus",false);
-		q1.addOption("Copenhagen",true);
-		q1.addOption("Amager",false);
-		q1.addOption("Lyngby",false);
-
-		questionRepository.save(q1);
+		quizGenerator.makeQuiz();
 	}
 }

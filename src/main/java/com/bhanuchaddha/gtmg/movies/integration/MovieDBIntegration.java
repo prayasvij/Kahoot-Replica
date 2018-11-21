@@ -22,9 +22,9 @@ public class MovieDBIntegration {
     @Value("${movies.discover.url}")
     private String discoverMovieURL;
 
-    public List<Movie> getMovies(){
+    public List<Movie> getPopularMovies(int page){
         ResponseEntity<DiscoverMovieResponse> response = template.getForEntity(discoverMovieURL
-        , DiscoverMovieResponse.class);
+        , DiscoverMovieResponse.class,page);
         return response.getBody().getResults();
     }
 }
