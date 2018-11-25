@@ -28,6 +28,10 @@ public class QuizGenerator {
 
     @Async
     public void makeQuiz(){
+
+        // Skip question creation if questions already exist
+        if(questionRepository.count() >0) return;
+
         List<Movie> allMovies = new ArrayList<>();
         for (int i = 1; i <= 10 ; i++) {
             allMovies.addAll(movieDBIntegration.getPopularMovies(i));
@@ -42,7 +46,7 @@ public class QuizGenerator {
         int count = allMovies.size()-1;
         Random random = new Random();
         List<Question> questions = new ArrayList<>();
-        for (int i = 0; i < 15 ; i++) {
+        for (int i = 0; i < 100 ; i++) {
             int m1= random.nextInt(count);
             int m2= random.nextInt(count);
             int m3= random.nextInt(count);
@@ -58,6 +62,6 @@ public class QuizGenerator {
             questions.add(question);
         }
         questionRepository.saveAll(questions);
-        log.info("all questions have been created");
+        log.info(questions.size()+"  questions have been created");
     }
 }

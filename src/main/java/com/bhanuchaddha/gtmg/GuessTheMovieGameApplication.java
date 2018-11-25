@@ -1,8 +1,6 @@
 package com.bhanuchaddha.gtmg;
 
 import com.bhanuchaddha.gtmg.quiz.QuizGenerator;
-import com.bhanuchaddha.gtmg.quiz.model.Question;
-import com.bhanuchaddha.gtmg.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +19,7 @@ public class GuessTheMovieGameApplication {
 
 	@Autowired
 	private QuizGenerator quizGenerator;
+
 
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {

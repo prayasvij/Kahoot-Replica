@@ -5,7 +5,7 @@
 * Spring Boot
 * Swagger Code gen - to generate rest client
 
-
+**db url** http://localhost:8080/h2-console
 
 https://api.themoviedb.org/3/movie/550?api_key=
 
