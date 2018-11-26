@@ -13,11 +13,11 @@ https://api.themoviedb.org/3/movie/550?api_key=
  https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=
 
 ### Road Map
-* Quiz Should be sent with unique Id and 20 random questions. Quiz should persist.
-* Persist the db in file. Dont call the service if questions exist.
+* Quiz Should be sent with unique Id and 10 random questions. Quiz should persist. >> DONE
+* Persist the db in file. Dont call the service if questions exist. >> DONE
 
 ##### Quiz
-* Quiz should not have answers
+* Quiz should not have answers >> DONE
 * Answers could be submitted to a quiz and result should be available
 
 ##### Session

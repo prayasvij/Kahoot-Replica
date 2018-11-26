@@ -1,6 +1,6 @@
 package com.bhanuchaddha.gtmg;
 
-import com.bhanuchaddha.gtmg.quiz.QuizGenerator;
+import com.bhanuchaddha.gtmg.quiz.QuestionEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +18,7 @@ public class GuessTheMovieGameApplication {
 	}
 
 	@Autowired
-	private QuizGenerator quizGenerator;
+	private QuestionEngine questionEngine;
 
 
 	@Bean
@@ -29,6 +29,7 @@ public class GuessTheMovieGameApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void populateQuestions(){
-		quizGenerator.makeQuiz();
+		questionEngine.run();
+
 	}
 }

@@ -19,7 +19,7 @@ import java.util.Random;
  */
 @Slf4j
 @Component
-public class QuizGenerator {
+public class QuestionEngine {
 
     @Autowired
     private MovieDBIntegration movieDBIntegration;
@@ -27,7 +27,7 @@ public class QuizGenerator {
     private QuestionRepository questionRepository;
 
     @Async
-    public void makeQuiz(){
+    public void run(){
 
         // Skip question creation if questions already exist
         if(questionRepository.count() >0) return;

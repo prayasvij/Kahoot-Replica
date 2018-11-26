@@ -1,5 +1,6 @@
 package com.bhanuchaddha.gtmg.quiz.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -28,8 +29,11 @@ public class Question {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ques_id")
     private List<Option> options = new ArrayList<>();
+
+    @JsonIgnore
     private int answer;
 
+    @JsonIgnore
     private AtomicInteger optionCount = new AtomicInteger(0);
 
     public void addOption(String optionContent, boolean correctAnswer){
