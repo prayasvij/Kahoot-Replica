@@ -1,5 +1,10 @@
 package com.bhanuchaddha.gtmg.quiz;
 
+import com.bhanuchaddha.gtmg.quiz.dto.CheckAnswerRequest;
+import com.bhanuchaddha.gtmg.quiz.dto.CheckQuizRequest;
+import com.bhanuchaddha.gtmg.quiz.dto.QuestionResult;
+import com.bhanuchaddha.gtmg.quiz.dto.QuizResult;
+import com.bhanuchaddha.gtmg.quiz.model.Option;
 import com.bhanuchaddha.gtmg.quiz.model.Question;
 import com.bhanuchaddha.gtmg.quiz.model.Quiz;
 import com.bhanuchaddha.gtmg.quiz.repository.QuestionRepository;
@@ -8,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 
 /**
  * Created by Bhanu Chaddha on 26-11-2018 12:17 AM.
@@ -38,5 +45,41 @@ public class QuizService {
     public Set<Question> getQuiz(long id){
         return quizRepository.findById(id).map(Quiz::getQuestions)
                 .orElseThrow(()->  new RuntimeException("Quiz not found"));
+    }
+
+    public QuestionResult checkAnswer(CheckAnswerRequest answer) {
+
+        Optional<Integer> ans = questionRepository.findById(answer.getQuestionId())
+                                .map(q->q.getAnswer());
+
+       return QuestionResult.builder()
+               .questionId(answer.getQuestionId())
+               .selectedOption(answer.getSelectedOption())
+               .correctOption(ans.orElse(-1))
+               .correct(ans.map(a->a==answer.getSelectedOption()).orElse(false))
+               .build();
+
+
+    }
+
+    public QuizResult checkQuiz(CheckQuizRequest quiz) {
+        quizRepository.findById(quiz.getQuizId())
+                .map(q-> q.getQuestions().stream())
+                .map(question -> checkQuestion(question, quiz))
+    }
+
+    private QuestionResult checkQuestion(Question question, CheckQuizRequest quiz) {
+        // to check if the question has been answered
+        Optional<CheckAnswerRequest> ans = quiz.getAnswer()
+                .stream()
+                .filter(a->a.getQuestionId()==question.getId())
+                .findFirst();
+
+        return QuestionResult.builder()
+                .questionId(question.getId())
+                .selectedOption(ans.map(a-> a.getSelectedOption()).orElse(-1))
+                .correctOption(question.getAnswer())
+                .correct(ans.map(a-> a.getSelectedOption()==question.getAnswer()).orElse(false))
+                .build();
     }
 }

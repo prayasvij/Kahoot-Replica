@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,7 +21,7 @@ public class Question {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String description;
     private QuestionType type;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,7 +47,20 @@ public class Question {
         }
 
         if(optionCount.get()==4){
-            Collections.shuffle(options);
+            shuffle();
         }
+    }
+
+    private void shuffle() {
+        int newCorrectOpt = new Random().nextInt(4)+1;
+        Optional<Option> currentCorrect =options.stream()
+                .filter( o -> o.getNumber() == answer )
+                .findFirst();
+        Optional<Option> previousCorrect =options.stream()
+                .filter( o -> o.getNumber() == newCorrectOpt )
+                .findFirst();
+        previousCorrect.ifPresent(o->o.setNumber(currentCorrect.get().getNumber()));
+        currentCorrect.ifPresent(o -> o.setNumber(newCorrectOpt));
+        this.answer=newCorrectOpt;
     }
 }

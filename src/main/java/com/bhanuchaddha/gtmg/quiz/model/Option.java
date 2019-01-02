@@ -1,5 +1,6 @@
 package com.bhanuchaddha.gtmg.quiz.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 public class Option {
+
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
