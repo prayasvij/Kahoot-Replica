@@ -4,27 +4,27 @@ import lombok.*;
 
 import java.util.List;
 
-@NoArgsConstructor
 @Builder
 @Getter
 public class QuizResult {
     private long id;
     @Singular
     private List<QuestionResult> questionResults;
-    private Double successPercentage;
-    private Double percentage;
+    private Double expectedSuccessPercentage;
+    private Double scorePercentage;
     private boolean success;
 
 //    TODO: add validations that required values are available
-    private Double getPercentage() {
+    public Double getScorePercentage() {
         long successCount = questionResults.stream()
                 .filter(questionResult -> questionResult.isCorrect())
                 .count();
-        percentage = successCount*100d/questionResults.size();
-        return percentage;
+        scorePercentage = (double)(successCount * 100)/questionResults.size();
+        return scorePercentage;
     }
 
-    public Boolean getSuccess() {
-        return percentage.compareTo(successPercentage) >= 0;
+    public boolean getSuccess() {
+         this.success= scorePercentage.compareTo(expectedSuccessPercentage) >= 0;
+         return this.success;
     }
 }

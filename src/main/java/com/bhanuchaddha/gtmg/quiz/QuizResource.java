@@ -1,5 +1,9 @@
 package com.bhanuchaddha.gtmg.quiz;
 
+import com.bhanuchaddha.gtmg.quiz.dto.CheckAnswerRequest;
+import com.bhanuchaddha.gtmg.quiz.dto.CheckQuizRequest;
+import com.bhanuchaddha.gtmg.quiz.dto.QuestionResult;
+import com.bhanuchaddha.gtmg.quiz.dto.QuizResult;
 import com.bhanuchaddha.gtmg.quiz.model.Question;
 import com.bhanuchaddha.gtmg.quiz.repository.QuestionRepository;
 import lombok.AllArgsConstructor;
@@ -37,6 +41,16 @@ public class QuizResource {
     @GetMapping("/quiz/{quizId}")
     public Set<Question> getQuiz (@PathVariable("quizId") long quizId ){
             return quizService.getQuiz(quizId);
+    }
+
+    @PostMapping("/quiz/{quizID}/check")
+    public QuizResult checkQuiz(@RequestBody CheckQuizRequest quiz) {
+        return quizService.checkQuiz(quiz);
+    }
+
+    @PostMapping("/question/{questionId}/check")
+    public QuestionResult checkQuestion(@RequestBody CheckAnswerRequest question) {
+        return quizService.checkAnswer(question);
     }
 
 

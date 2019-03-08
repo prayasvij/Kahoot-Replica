@@ -33,3 +33,7 @@ https://api.themoviedb.org/3/movie/550?api_key=
 * Each question should appear for certain time and answer should be shown at the end
 * Real time LeaderBoard should be available
 * Winner should be shown at the end of the quiz
+
+##### Important Links
+Nice article on one-to-many
+https://www.callicoder.com/hibernate-spring-boot-jpa-one-to-many-mapping-example/
