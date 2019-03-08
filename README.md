@@ -1,4 +1,4 @@
-# Guess the Movie Game
+# Kahoot Replica
 
 
 ## Technology being used
