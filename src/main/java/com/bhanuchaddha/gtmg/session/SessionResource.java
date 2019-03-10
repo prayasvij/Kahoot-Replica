@@ -1,5 +1,6 @@
 package com.bhanuchaddha.gtmg.session;
 
+import com.bhanuchaddha.gtmg.session.dto.JoinSessionRequest;
 import com.bhanuchaddha.gtmg.session.dto.UserAnswerRequest;
 import com.bhanuchaddha.gtmg.session.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class SessionResource {
     }
 
     @PutMapping("/{sessionId}")
-    public Long joinSession(@PathVariable Long sessionId, @RequestBody String userName) {
-        return sessionService.joinSession(sessionId, userName);
+    public Long joinSession(@PathVariable Long sessionId, @RequestBody JoinSessionRequest request) {
+        return sessionService.joinSession(sessionId, request.getUserName());
     }
 
     @GetMapping("/{sessionId}/begin")

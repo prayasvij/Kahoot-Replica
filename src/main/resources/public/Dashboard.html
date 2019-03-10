@@ -1,74 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
 <head>
     <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Dashboard</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+    <div class="container">
+        <div class="py-5 text-center">
+            <img class="d-block mx-auto mb-4" src="/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72"
+                height="72">
+            <h2>Session</h2>
+            <p class="lead">Below are the details for current session</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Top Users</span>
+                    <span class="badge badge-secondary badge-pill">3</span>
+                </h4>
+                <ul id="top_users" class="list-group ">
+
+
+                </ul>
+
+
+            </div>
+            <div class="col-md-8">
+                <p id="session-id"></p>
+                <button class="btn btn-primary" type="submit" onClick="startSession()">Start Session</button>
+
+            </div>
+        </div>
+    </div>
+    <div>
+        <div>
+
+        </div>
+        <br />
+        <div>
+            <button id="connect" onclick="connect();">Connect</button>
+            <button id="disconnect" disabled="disabled" onclick="disconnect();">
+                Disconnect
+            </button>
+        </div>
+
+
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script type="text/javascript">
-            var stompClient = null;
+        var stompClient = null;
 
-            function setConnected(connected) {
-                document.getElementById('connect').disabled = connected;
-                document.getElementById('disconnect').disabled = !connected;
-                document.getElementById('conversationDiv').style.visibility
-                  = connected ? 'visible' : 'hidden';
-                document.getElementById('response').innerHTML = '';
+        function answerQuestion() {
+            var sessionId = '1';
+            var url = '/session/' + sessionId + '/answer';
+            var data = {
+                user_id: $("#userId").val(),
+                question_id: $("#questionId").val(),
+                selected_option: $("#selectedOption").val()
             }
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: JSON.stringify(data),
+                success: function (data) {
+                    alert("answer submited")
 
-            function connect() {
-                var socket = new SockJS('/socket');
-                stompClient = Stomp.over(socket);
-                stompClient.connect({}, function(frame) {
-                    setConnected(true);
-                    console.log('Connected: ' + frame);
-                    stompClient.subscribe('/dashboard', function(messageOutput) {
-                        showMessageOutput(JSON.parse(messageOutput.body));
-                    });
+                },
+                dataType: "json",
+                contentType: 'application/json'
+            });
+        }
+
+        function startSession() {
+            $.post("/session", function (data) {
+                $("#session-id").html(data);
+                alert("Session is created");
+            });
+        }
+
+
+        function setConnected(connected) {
+            document.getElementById('connect').disabled = connected;
+            document.getElementById('disconnect').disabled = !connected;
+
+
+
+        }
+
+        function connect() {
+            var socket = new SockJS('/socket');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/dashboard', function (messageOutput) {
+                    showMessageOutput(JSON.parse(messageOutput.body));
                 });
+                stompClient.subscribe('/userRanking', function (messageOutput) {
+                    showUserRanking(JSON.parse(messageOutput.body));
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
             }
+            setConnected(false);
+            console.log("Disconnected");
+        }
 
-            function disconnect() {
-                if(stompClient != null) {
-                    stompClient.disconnect();
-                }
-                setConnected(false);
-                console.log("Disconnected");
-            }
+        function showUserRanking(userRankingList) {
+            $("#top_users").empty();
+            $.each(userRankingList, function (index, userRank) {
+
+                $("#top_users").append('<li class="list-group-item d-flex justify-content-between lh-condensed"><div><h6 class="my-0">User Name: ' + userRank.user_name + '</h6><small class="text-muted">Rank ' + userRank.rank + '</small></div><span class="text-muted">Score: ' + userRank.score + '</span></li>');
+            });
 
 
-            function showMessageOutput(messageOutput) {
-                var response = document.getElementById('response');
-                var p = document.createElement('p');
-                p.style.wordWrap = 'break-word';
-                p.appendChild(document.createTextNode(
-                    "userId:"+messageOutput.user_id+" questionId:"+messageOutput.question_id +"selectedOption:"+messageOutput.selected_option
-                ));
-                response.appendChild(p);
-            }
-        </script>
-</head>
-<body>
-<div>
-    <div>
+        }
 
-    </div>
-    <br />
-    <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">
-            Disconnect
-        </button>
-    </div>
-    <br />
-    <div id="conversationDiv">
-        <input type="text" id="userId" placeholder="userId"/>
-        <input type="text" id="questionId" placeholder="questionId"/>
-        <input type="text" id="selectedOption" placeholder="selectedOption"/>
-        <button id="sendMessage" onclick="sendMessage();">Send</button>
-        <p id="response"></p>
-    </div>
-</div>
-
+        function showMessageOutput(messageOutput) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode(
+                "userId:" + messageOutput.user_id + " questionId:" + messageOutput.question_id + "selectedOption:" + messageOutput.selected_option
+            ));
+            response.appendChild(p);
+        }
+    </script>
 </body>
+
 </html>

@@ -12,7 +12,13 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/dashboard","/question","/answer","/state","/countdown");
+        config.enableSimpleBroker(
+                "/dashboard"
+                ,"/userRanking"
+                ,"/question"
+                ,"/answer"
+                ,"/state"
+                ,"/countdown");
         config.setApplicationDestinationPrefixes("/app");
     }
 

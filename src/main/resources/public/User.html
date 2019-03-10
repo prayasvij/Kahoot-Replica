@@ -1,106 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
     <title>User</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-default ">
+    </nav>
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Project name</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div><!-- /.nav-collapse -->
+        </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+    <div class="container">
+
+        <div class="row row-offcanvas row-offcanvas-right">
+
+            <div class="col-md-8">
+                <div id="conversationDiv">
+                    <input type="text" id="userId" placeholder="userId" />
+                    <input type="text" id="questionId" placeholder="questionId" />
+                    <input type="text" id="selectedOption" placeholder="selectedOption" />
+                    <button id="answerQuestion" onclick="answerQuestion();">Submit</button>
+                    <p id="state"></p>
+                    <p id="countDown"></p>
+                    <p id="question"></p>
+                    <p id="answer"></p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Connection</div>
+                        <div class="panel-body">
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <button type="button" id="connect" class="btn btn-success"
+                                        onclick="connect();">Connect</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-danger" id="disconnect"
+                                        onclick="disconnect();">Disconnect</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <form class="needs-validation">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Connection</div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <p id="user_id_message"></p>
+                                <p id="user_id"></p>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="user_name" placeholder="User Name"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="session_id" placeholder="Session Id"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 ">
+                                    <div class="form-group">
+                                        <button class="btn btn-primary " class="form-control" type="button"
+                                            onclick="joinSession()">Join
+                                            Session</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script type="text/javascript">
-            var stompClient = null;
+        var stompClient = null;
 
-            function setConnected(connected) {
-                document.getElementById('connect').disabled = connected;
-                document.getElementById('disconnect').disabled = !connected;
-                document.getElementById('conversationDiv').style.visibility
-                  = connected ? 'visible' : 'hidden';
+
+
+        function answerQuestion() {
+            var sessionId = '1';
+            var url = '/session/' + sessionId + '/answer';
+            var data = {
+                user_id: $("#userId").val(),
+                question_id: $("#questionId").val(),
+                selected_option: $("#selectedOption").val()
             }
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: JSON.stringify(data),
+                success: function (data) {
+                    alert("answer submited")
 
-            function connect() {
-                var socket = new SockJS('/socket');
-                stompClient = Stomp.over(socket);
-                stompClient.connect({}, function(frame) {
-                    setConnected(true);
-                    console.log('Connected: ' + frame);
+                },
+                dataType: "json",
+                contentType: 'application/json'
+            });
+        }
 
-                    stompClient.subscribe('/answer', function(data) {
-                        showAnswer(JSON.parse(data.body));
-                    });
-                    stompClient.subscribe('/state', function(data) {
-                        showState(JSON.parse(data.body));
-                    });
-                    stompClient.subscribe('/countdown', function(data) {
-                        showCountDown(JSON.parse(data.body));
-                    });
-                            stompClient.subscribe('/question', function(messageOutput) {
-                        showQuestion(JSON.parse(messageOutput.body));
-                    });
+        function joinSession() {
+            var sessionId = $("#session_id").val();
+            var useName = $("#user_name").val();
+            var url = '/session/' + sessionId;
+            var data = {
+                user_name: useName
+            }
+            $.ajax({
+                type: "PUT",
+                url: url,
+                data: JSON.stringify(data),
+                success: function (data) {
+                    $("#user_id_message").html("User has joined the session. User id is : " + data);
+                    $("#user_id").html(data);
+                },
+                dataType: "json",
+                contentType: 'application/json'
+            });
+
+        }
+
+        function setConnected(connected) {
+            document.getElementById('connect').disabled = connected;
+            document.getElementById('disconnect').disabled = !connected;
+            document.getElementById('conversationDiv').style.visibility
+                = connected ? 'visible' : 'hidden';
+        }
+
+        function connect() {
+            var socket = new SockJS('/socket');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+
+                stompClient.subscribe('/answer', function (data) {
+                    showAnswer(JSON.parse(data.body));
                 });
+                stompClient.subscribe('/state', function (data) {
+                    showState(JSON.parse(data.body));
+                });
+                stompClient.subscribe('/countdown', function (data) {
+                    showCountDown(JSON.parse(data.body));
+                });
+                stompClient.subscribe('/question', function (messageOutput) {
+                    showQuestion(JSON.parse(messageOutput.body));
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
             }
+            setConnected(false);
+            console.log("Disconnected");
+        }
 
-            function disconnect() {
-                if(stompClient != null) {
-                    stompClient.disconnect();
-                }
-                setConnected(false);
-                console.log("Disconnected");
-            }
+        function sendMessage() {
+            var userId = document.getElementById('userId').value;
+            var questionId = document.getElementById('questionId').value;
+            var selectedOption = document.getElementById('selectedOption').value;
+            stompClient.send("/app/401/answer", {},
+                JSON.stringify({ 'user_id': userId, 'question_id': questionId, 'selected_option': selectedOption }));
+        }
 
-            function sendMessage() {
-                var userId = document.getElementById('userId').value;
-                var questionId = document.getElementById('questionId').value;
-                var selectedOption = document.getElementById('selectedOption').value;
-                stompClient.send("/app/401/answer", {},
-                  JSON.stringify({'user_id':userId, 'question_id':questionId, 'selected_option':selectedOption}));
-            }
+        function showQuestion(messageOutput) {
+            var response = document.getElementById('question');
+            response.innerHTML = "<p>" + messageOutput.description + "</p><ol><li>" + messageOutput.options[0].value + "</li><li>" + messageOutput.options[1].value + "</li><li>" + messageOutput.options[2].value + "</li><li>" + messageOutput.options[3].value + "</li></ol>";
+            document.getElementById('answer').innerHTML = '';
+            document.getElementById('countDown').innerHTML = '';
 
-            function showQuestion(messageOutput) {
-                var response = document.getElementById('question');
-                response.innerHTML="<p>"+messageOutput.description+"</p><ol><li>"+messageOutput.options[0].value+"</li><li>"+messageOutput.options[1].value+"</li><li>"+messageOutput.options[2].value+"</li><li>"+messageOutput.options[3].value+"</li></ol>";
-                document.getElementById('answer').innerHTML='';
-                document.getElementById('countDown').innerHTML='';
+        }
 
-            }
+        function showAnswer(answer) {
+            document.getElementById('answer').innerHTML = 'Answer:' + answer;
+            document.getElementById('question').innerHTML = '';
+            document.getElementById('countDown').innerHTML = '';
+        }
+        function showCountDown(countDown) {
+            document.getElementById('countDown').innerHTML = '' + countDown;
+            document.getElementById('question').innerHTML = '';
+            document.getElementById('answer').innerHTML = '';
+        }
+        function showState(state) {
+            document.getElementById('state').innerHTML = '' + state;
+        }
 
-            function showAnswer(answer) {
-                document.getElementById('answer').innerHTML='Answer:'+answer;
-                document.getElementById('question').innerHTML='';
-                document.getElementById('countDown').innerHTML='';
-            }
-            function showCountDown(countDown) {
-                document.getElementById('countDown').innerHTML=''+countDown;
-                document.getElementById('question').innerHTML='';
-                document.getElementById('answer').innerHTML='';
-            }
-            function showState(state) {
-                document.getElementById('state').innerHTML=''+state;
-            }
-
-        </script>
-</head>
-<body>
-<div>
-    <div>
-
-    </div>
-    <br />
-    <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">
-            Disconnect
-        </button>
-    </div>
-    <br />
-    <div id="conversationDiv">
-        <input type="text" id="userId" placeholder="userId"/>
-        <input type="text" id="questionId" placeholder="questionId"/>
-        <input type="text" id="selectedOption" placeholder="selectedOption"/>
-        <button id="sendMessage" onclick="sendMessage();">Send</button>
-        <p id="state"></p>
-        <p id="countDown"></p>
-        <p id="question"></p>
-        <p id="answer"></p>
-    </div>
-</div>
-
+    </script>
 </body>
+
 </html>

@@ -40,7 +40,7 @@ public class User {
     }
 
     public User increaseScore(){
-        this.score=this.score++;
+        this.score=this.score+1;
         return this;
     }
 }
